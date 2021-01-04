@@ -1,38 +1,26 @@
-# Holistic2Scratch
+# NN2Scratch
 
-Face tracking on Scratch 3 with Webcam only.
-
-It uses facemesh package provided by MediaPipe and TensorFlow.js. If you want to know about the technology behind, please refer to "[Face and hand tracking in the browser with MediaPipe and TensorFlow.js](https://blog.tensorflow.org/2020/03/face-and-hand-tracking-in-browser-with-mediapipe-and-tensorflowjs.html)"
+Neural Network on Scratch 3
 
 ## Demo Movie
 
-### Single face
-
-  <img src="images/facemesh.gif" width="600" />
-
-### Multiple faces
-
-  <img src="images/facemesh_multiple_faces.gif" width="600" />
+TBD
 
 ## How to use
 
-- Open https://champierre.github.io/scratch3/ on Chrome.
-- Open Facemesh2Scratch extension.
+TBD
 
 ## Sample project
 
-https://github.com/champierre/facemesh2scratch/raw/master/sample_projects/facemesh.sb3
-
-<img src="images/en/sample_project.png" />
+https://github.com/champierre/nn2scratch/raw/master/sample_projects/nn.sb3
 
 ## Licence
 
-- Facemesh2Scratch is under [BSD 3-Clause License](./LICENSE.md), open source and freely available to anyone. You can use it at your classes, workshops. Commercial usage is also accepted. If you or your students created something cool using Facemesh2Scratch, please share it on SNS using hashtag #facemesh2scratch or let me know to any of these contacts. Interesting projects will be added to the "Examples of use".
+- NN2Scratch is under [BSD 3-Clause License](./LICENSE.md), open source and freely available to anyone. You can use it at your classes, workshops. Commercial usage is also accepted. If you or your students created something cool using Facemesh2Scratch, please share it on SNS using hashtag #facemesh2scratch or let me know to any of these contacts. Interesting projects will be added to the "Examples of use".
 
 ## Examples of use
 
-- [Control an object by face direction](https://twitter.com/y0sh1k10/status/1244241128074797057)
-- [Blow a balloon](https://twitter.com/kuroyanagi_css/status/1241510719834558467)
+TBD
 
 ## Requirements
 
@@ -43,9 +31,9 @@ https://github.com/champierre/facemesh2scratch/raw/master/sample_projects/faceme
 - Browser
   - Chrome
 
-Facemesh2Scratch sometimes does not work because of some Chrome extensions. Please switch to [Guest Mode](https://support.google.com/chrome/answer/6130773) in such cases.
+NN2Scratch sometimes does not work because of some Chrome extensions. Please switch to [Guest Mode](https://support.google.com/chrome/answer/6130773) in such cases.
 
-## For Developers - How to run Facemesh2Scratch extension on your computer
+## For Developers - How to run NN2Scratch extension on your computer
 
 1. Setup LLK/scratch-gui on your computer.
 
@@ -55,16 +43,16 @@ Facemesh2Scratch sometimes does not work because of some Chrome extensions. Plea
   % npm install
   ```
 
-2. In scratch-gui folder, clone Facemesh2Scratch. You will have facemesh2scratch folder under scratch-gui.
+2. In scratch-gui folder, clone NN2Scratch. You will have nn2scratch folder under scratch-gui.
 
   ```
-  % git clone git@github.com:champierre/facemesh2scratch.git
+  % git clone git@github.com:champierre/nn2scratch.git
   ```
 
 3. Run the install script.
 
   ```
-  % sh facemesh2scratch/install.sh
+  % sh nn2scratch/install.sh
   ```
 
 4. Run Scratch, then go to http://localhost:8601/.
