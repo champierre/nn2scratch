@@ -8,7 +8,8 @@ TBD
 
 ## How to use
 
-TBD
+1. Open https://champierre.github.io/nn2scratch/ on Chrome.
+2. Select NN2Scratch extension.
 
 ## Sample project
 
