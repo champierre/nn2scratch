@@ -5,40 +5,25 @@ const formatMessage = require('format-message')
 const ml5 = require('ml5')
 
 const Message = {
-  normalizeData: {
-    'ja': 'データを正規化する',
-    'ja-Hira': 'データをせいきかする',
-    'en': 'normalize data'
+  joinWithComma: {
+    'ja': '[STR1] , [STR2]',
+    'ja-Hira': '[STR1] , [STR2]',
+    'en': '[STR1] , [STR2]'
+  },
+  setLabel: {
+    'ja': '[VALUES] に [LABEL] とラベル付けする',
+    'ja-Hira': '[VALUES] に [LABEL] とラベル付けする',
+    'en': 'set label: [LABEL] for data: [VALUES]'
   },
   train: {
     'ja': '訓練する',
     'ja-Hira': 'くんれんする',
     'en': 'train'
   },
-  setInputs: {
-    'ja': '入力データの [KEY] に [VALUE] をセットする',
-    'ja-Hira': 'にゅうりょくデータの [KEY] に [VALUE] をセットする',
-    'en': 'set [VALUE] to [KEY] of inputs data'
-  },
-  setOutput: {
-    'ja': '出力データの [KEY] に [VALUE] をセットする',
-    'ja-Hira': 'しゅつりょくデータの [KEY] に [VALUE] をセットする',
-    'en': 'set [VALUE] to [KEY] of output data'
-  },
-  addData: {
-    'ja': 'データを追加する',
-    'ja-Hira': 'データを追加する',
-    'en': 'addData'
-  },
-  setClassificationInputs: {
-    'ja': '分類用入力データの [KEY] に [VALUE] をセットする',
-    'ja-Hira': 'ぶんるいようにゅうりょくデータの [KEY] に [VALUE] をセットする',
-    'en': 'set [VALUE] to [KEY] of classification inputs data'
-  },
   classify: {
-    'ja': '分類する',
-    'ja-Hira': 'ぶんるいする',
-    'en': 'classify'
+    'ja': '[VALUES] を分類する',
+    'ja-Hira': '[VALUES] をぶんるいする',
+    'en': 'classify [VALUES]'
   },
   getLabel: {
     'ja': 'ラベル',
@@ -52,9 +37,6 @@ class Scratch3Nn2ScratchBlocks {
 
     constructor (runtime) {
         this.runtime = runtime;
-        this.inputs = {};
-        this.output = {};
-        this.classificationInputs = {};
         this.label = null;
 
         const options = {
@@ -71,9 +53,30 @@ class Scratch3Nn2ScratchBlocks {
             name: 'Nn2Scratch',
             blocks: [
                 {
-                    opcode: 'normalizeData',
+                    opcode: 'joinWithComma',
+                    blockType: BlockType.REPORTER,
+                    text: Message.joinWithComma[this._locale],
+                    arguments: {
+                        STR1: {
+                            type: ArgumentType.STRING
+                          },
+                        STR2: {
+                            type: ArgumentType.STRING
+                        }
+                    }
+                },
+                {
+                    opcode: 'setLabel',
                     blockType: BlockType.COMMAND,
-                    text: Message.normalizeData[this._locale]
+                    text: Message.setLabel[this._locale],
+                    arguments: {
+                        VALUES: {
+                            type: ArgumentType.STRING
+                        },
+                        LABEL: {
+                            type: ArgumentType.STRING
+                        }
+                    }
                 },
                 {
                     opcode: 'train',
@@ -81,53 +84,14 @@ class Scratch3Nn2ScratchBlocks {
                     text: Message.train[this._locale]
                 },
                 {
-                    opcode: 'setInputs',
-                    blockType: BlockType.COMMAND,
-                    text: Message.setInputs[this._locale],
-                    arguments: {
-                        KEY: {
-                            type: ArgumentType.STRING
-                        },
-                        VALUE: {
-                            type: ArgumentType.NUMBER
-                        }
-                    }
-                },
-                {
-                    opcode: 'setOutput',
-                    blockType: BlockType.COMMAND,
-                    text: Message.setOutput[this._locale],
-                    arguments: {
-                        KEY: {
-                            type: ArgumentType.STRING
-                        },
-                        VALUE: {
-                            type: ArgumentType.STRING
-                        }
-                    }
-                },
-                {
-                    opcode: 'addData',
-                    blockType: BlockType.COMMAND,
-                    text: Message.addData[this._locale]
-                },
-                {
-                    opcode: 'setClassificationInputs',
-                    blockType: BlockType.COMMAND,
-                    text: Message.setClassificationInputs[this._locale],
-                    arguments: {
-                        KEY: {
-                            type: ArgumentType.STRING
-                        },
-                        VALUE: {
-                            type: ArgumentType.STRING
-                        }
-                    }
-                },
-                {
                     opcode: 'classify',
                     blockType: BlockType.COMMAND,
-                    text: Message.classify[this._locale]
+                    text: Message.classify[this._locale],
+                    arguments: {
+                        VALUES: {
+                            type: ArgumentType.STRING
+                        }
+                    }
                 },
                 {
                     opcode: 'getLabel',
@@ -138,61 +102,47 @@ class Scratch3Nn2ScratchBlocks {
         };
     }
 
-    normalizeData() {
-      this.nn.normalizeData()
+    joinWithComma(args) {
+      return `${args.STR1},${args.STR2}`;
+    }
+
+    setLabel(args) {
+      let inputs = args.VALUES.split(',').map(v => Number(v));
+      let outputs = [args.LABEL]
+
+      this.nn.addData(inputs, outputs);
+      console.log(this.nn.data);
     }
 
     train() {
+      this.nn.normalizeData()
       const trainingOptions = {
         epochs: 32,
         batchSize: 12
       }
 
       this.nn.train(trainingOptions, function() {
-        console.log('Training is completed.')
+        alert('Training is completed.');
       });
     }
 
-    setInputs(args) {
-      this.inputs[args.KEY] = Number(args.VALUE);
-    }
-
-    setOutput(args) {
-      this.output[args.KEY] = args.VALUE;
-    }
-
-    addData() {
-      this.nn.addData(this.inputs, this.output);
-      console.log("addData:");
-      console.log("inputs", this.inputs);
-      console.log("output", this.output);
-      this.inputs = {};
-      this.output = {};
-    }
-
-    setClassificationInputs(args) {
-      console.log("setClassificationInputs:")
-      console.log(`inputs[${args.KEY}]=${Number(args.VALUE)}`);
-      this.classificationInputs[args.KEY] = Number(args.VALUE);
-    }
-
-    classify() {
-      this.nn.classify(this.classificationInputs, (error, result) => {
+    classify(args) {
+      let inputs = args.VALUES.split(',').map(v => Number(v));
+      this.nn.classify(inputs, (error, result) => {
         if(error){
           console.error(error);
           return;
         }
+
         let maxConfidence = 0;
         let label = null;
         for (let i = 0; i < result.length; i++) {
-          console.log(result[i].confidence)
           if (result[i].confidence > maxConfidence) {
             maxConfidence = result[i].confidence;
             label = result[i].label;
           }
         }
         this.label = label;
-        this.classificationInputs = {};
       });
     }
 
