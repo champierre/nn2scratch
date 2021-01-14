@@ -15,6 +15,16 @@ const Message = {
     'ja-Hira': '[VALUES] に [LABEL] とラベル付けする',
     'en': 'set label: [LABEL] for data: [VALUES]'
   },
+  dataCount: {
+    'ja': 'ラベル [LABEL] のデータ数',
+    'ja-Hira': 'ラベル [LABEL] のデータすう',
+    'en': 'data count of label: [LABEL]'
+  },
+  resetAllLabels: {
+    'ja': 'ラベルの全てのデータをリセット',
+    'ja-Hira': 'ラベルのすべてのデータをリセット',
+    'en': 'reset all labels'
+  },
   train: {
     'ja': '訓練する',
     'ja-Hira': 'くんれんする',
@@ -30,6 +40,11 @@ const Message = {
     'ja-Hira': 'ラベル',
     'en': 'label'
   },
+  label: {
+    'ja': 'りんご',
+    'ja-Hira': 'りんご',
+    'en': 'apple'
+  }
 }
 const AvailableLocales = ['en', 'ja', 'ja-Hira']
 
@@ -58,10 +73,12 @@ class Scratch3Nn2ScratchBlocks {
                     text: Message.joinWithComma[this._locale],
                     arguments: {
                         STR1: {
-                            type: ArgumentType.STRING
+                            type: ArgumentType.STRING,
+                            defaultValue: 0
                           },
                         STR2: {
-                            type: ArgumentType.STRING
+                            type: ArgumentType.STRING,
+                            defaultValue: 0
                         }
                     }
                 },
@@ -71,12 +88,30 @@ class Scratch3Nn2ScratchBlocks {
                     text: Message.setLabel[this._locale],
                     arguments: {
                         VALUES: {
-                            type: ArgumentType.STRING
+                            type: ArgumentType.STRING,
+                            defaultValue: 0
                         },
                         LABEL: {
-                            type: ArgumentType.STRING
+                            type: ArgumentType.STRING,
+                            defaultValue: Message.label[this._locale]
                         }
                     }
+                },
+                {
+                    opcode: 'dataCount',
+                    blockType: BlockType.REPORTER,
+                    text: Message.dataCount[this._locale],
+                    arguments: {
+                        LABEL: {
+                            type: ArgumentType.STRING,
+                            defaultValue: Message.label[this._locale]
+                        }
+                    }
+                },
+                {
+                    opcode: 'resetAllLabels',
+                    blockType: BlockType.COMMAND,
+                    text: Message.resetAllLabels[this._locale]
                 },
                 {
                     opcode: 'train',
@@ -89,7 +124,8 @@ class Scratch3Nn2ScratchBlocks {
                     text: Message.classify[this._locale],
                     arguments: {
                         VALUES: {
-                            type: ArgumentType.STRING
+                            type: ArgumentType.STRING,
+                            defaultValue: 0
                         }
                     }
                 },
@@ -111,7 +147,15 @@ class Scratch3Nn2ScratchBlocks {
       let outputs = [args.LABEL]
 
       this.nn.addData(inputs, outputs);
-      console.log(this.nn.data);
+    }
+
+    dataCount(args) {
+      const arr = this.nn.neuralNetworkData.data.raw;
+      return arr.filter(item => item.ys[0] === args.LABEL).length;
+    }
+
+    resetAllLabels() {
+      this.nn.neuralNetworkData.data.raw = [];
     }
 
     train() {
