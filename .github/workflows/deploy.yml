@@ -18,6 +18,11 @@ jobs:
       - uses: actions/checkout@v2
         with:
           path: ./nn2scratch
+      - uses: actions/checkout@v2
+        with:
+          repository: yokobond/scratch-microbit-more
+          path: ./microbitMore
+      - run: sh ./microbitMore/install-stretch3.sh
       - run: sh ./nn2scratch/install.sh
       - run: npm run build
       - uses: peaceiris/actions-gh-pages@v3
