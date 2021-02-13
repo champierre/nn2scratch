@@ -1215,8 +1215,10 @@ var WorkerDispatch = /*#__PURE__*/function (_SharedDispatch) {
 
 
   _createClass(WorkerDispatch, [{
-    key: "setService",
-
+    key: "waitForConnection",
+    get: function get() {
+      return this._connectionPromise;
+    }
     /**
      * Set a local object as the global provider of the specified service.
      * WARNING: Any method on the provider can be called from any worker within the dispatch system.
@@ -1224,6 +1226,9 @@ var WorkerDispatch = /*#__PURE__*/function (_SharedDispatch) {
      * @param {object} provider - a local object which provides this service.
      * @returns {Promise} - a promise which will resolve once the service is registered.
      */
+
+  }, {
+    key: "setService",
     value: function setService(service, provider) {
       var _this2 = this;
 
@@ -1286,11 +1291,6 @@ var WorkerDispatch = /*#__PURE__*/function (_SharedDispatch) {
       }
 
       return promise;
-    }
-  }, {
-    key: "waitForConnection",
-    get: function get() {
-      return this._connectionPromise;
     }
   }]);
 
