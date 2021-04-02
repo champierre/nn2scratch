@@ -20,7 +20,7 @@ jobs:
           path: ./nn2scratch
       - uses: actions/checkout@v2
         with:
-          repository: yokobond/scratch-microbit-more
+          repository: yokobond/mbit-more-v2
           path: ./microbitMore
       - run: sh ./microbitMore/install-stretch3.sh
       - run: sh ./nn2scratch/install.sh

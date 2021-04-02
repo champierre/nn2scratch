@@ -20,10 +20,15 @@ const Message = {
     'ja-Hira': 'ラベル [LABEL] のデータすう',
     'en': 'data count of label: [LABEL]'
   },
-  resetAllLabels: {
-    'ja': 'ラベルの全てのデータをリセット',
-    'ja-Hira': 'ラベルのすべてのデータをリセット',
-    'en': 'reset all labels'
+  all: {
+    'ja': 'の全て',
+    'ja-Hira': 'のすべて',
+    'en': 'all'
+  },
+  reset: {
+    'ja': 'ラベル [LABEL] のデータをリセット',
+    'ja-Hira': 'ラベル [LABEL] のがくしゅうをリセット',
+    'en': 'reset label: [LABEL]'
   },
   train: {
     'ja': '訓練する',
@@ -109,9 +114,16 @@ class Scratch3Nn2ScratchBlocks {
                     }
                 },
                 {
-                    opcode: 'resetAllLabels',
+                    opcode: 'reset',
                     blockType: BlockType.COMMAND,
-                    text: Message.resetAllLabels[this._locale]
+                    text: Message.reset[this._locale],
+                    arguments: {
+                        LABEL: {
+                            type: ArgumentType.STRING,
+                            menu: 'reset_menu',
+                            defaultValue: 'all'
+                      }
+                    }
                 },
                 {
                     opcode: 'train',
@@ -134,7 +146,12 @@ class Scratch3Nn2ScratchBlocks {
                     text: Message.getLabel[this._locale],
                     blockType: BlockType.REPORTER
                 },
-            ]
+            ],
+            menus: {
+                reset_menu: {
+                    items: this.getMenu()
+                }
+            }
         };
     }
 
@@ -201,6 +218,20 @@ class Scratch3Nn2ScratchBlocks {
       } else {
         return 'en';
       }
+    }
+
+    getMenu() {
+      let arr = [];
+      let defaultValue = 'all';
+      let text = Message.all[this._locale];
+      arr.push({text: text, value: defaultValue});
+      for(let i = 1; i <= 10; i++) {
+        let obj = {};
+        obj.text = i.toString(10);
+        obj.value = i.toString(10);
+        arr.push(obj);
+      };
+      return arr;
     }
 }
 
