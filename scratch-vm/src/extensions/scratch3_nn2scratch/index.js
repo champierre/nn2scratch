@@ -144,6 +144,11 @@ class Scratch3Nn2ScratchBlocks {
                         }
                     }
                 },
+                {
+                    opcode: 'debug',
+                    blockType: BlockType.COMMAND,
+                    text: 'debug'
+                },
             ],
             menus: {
                 reset_menu: {
@@ -176,18 +181,23 @@ class Scratch3Nn2ScratchBlocks {
 
     resetAll(args) {
       this.nn.neuralNetworkData.data.raw = [];
+      this.nn.dispose()
     }
 
     train() {
-      this.nn.normalizeData()
-      const trainingOptions = {
-        epochs: 32,
-        batchSize: 12
-      }
+      if (this.nn.neuralNetworkData.data.raw.length === 0) {
+        alert('[Error] Data is not added yet!')
+      } else {
+        this.nn.normalizeData()
+        const trainingOptions = {
+          epochs: 32,
+          batchSize: 12
+        }
 
-      this.nn.train(trainingOptions, function() {
-        alert('Training is completed.');
-      });
+        this.nn.train(trainingOptions, function() {
+          alert('Training is completed.');
+        });
+      }
     }
 
     getLabel(args) {
@@ -225,6 +235,10 @@ class Scratch3Nn2ScratchBlocks {
         arr.push(obj);
       };
       return arr;
+    }
+
+    debug() {
+      console.log(this.nn.neuralNetworkData.data.raw);
     }
 }
 
