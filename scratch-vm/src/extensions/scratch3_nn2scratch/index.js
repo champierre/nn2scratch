@@ -181,7 +181,6 @@ class Scratch3Nn2ScratchBlocks {
 
     resetAll(args) {
       this.nn.neuralNetworkData.data.raw = [];
-      this.nn.dispose()
     }
 
     train() {
