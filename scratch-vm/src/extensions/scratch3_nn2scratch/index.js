@@ -40,15 +40,10 @@ const Message = {
     'ja-Hira': 'くんれんする',
     'en': 'train'
   },
-  classify: {
-    'ja': '[VALUES] を分類する',
-    'ja-Hira': '[VALUES] をぶんるいする',
-    'en': 'classify [VALUES]'
-  },
   getLabel: {
-    'ja': 'ラベル',
-    'ja-Hira': 'ラベル',
-    'en': 'label'
+    'ja': '[VALUES] のラベル',
+    'ja-Hira': '[VALUES] のラベル',
+    'en': 'label of [VALUES]'
   },
   defaultLabel: {
     'ja': 'りんご',
@@ -62,7 +57,6 @@ class Scratch3Nn2ScratchBlocks {
 
     constructor (runtime) {
         this.runtime = runtime;
-        this.label = null;
 
         const options = {
           task: 'classification'
@@ -140,20 +134,15 @@ class Scratch3Nn2ScratchBlocks {
                     text: Message.train[this._locale]
                 },
                 {
-                    opcode: 'classify',
-                    blockType: BlockType.COMMAND,
-                    text: Message.classify[this._locale],
+                    opcode: 'getLabel',
+                    text: Message.getLabel[this._locale],
+                    blockType: BlockType.REPORTER,
                     arguments: {
                         VALUES: {
                             type: ArgumentType.STRING,
                             defaultValue: 0
                         }
                     }
-                },
-                {
-                    opcode: 'getLabel',
-                    text: Message.getLabel[this._locale],
-                    blockType: BlockType.REPORTER
                 },
             ],
             menus: {
@@ -201,28 +190,18 @@ class Scratch3Nn2ScratchBlocks {
       });
     }
 
-    classify(args) {
+    getLabel(args) {
       let inputs = args.VALUES.split(',').map(v => Number(v));
-      this.nn.classify(inputs, (error, result) => {
-        if(error){
-          console.error(error);
-          return;
+      const result = this.nn.classifySync(inputs);
+      let maxConfidence = 0;
+      let label = null;
+      for (let i = 0; i < result.length; i++) {
+        if (result[i].confidence > maxConfidence) {
+          maxConfidence = result[i].confidence;
+          label = result[i].label;
         }
-
-        let maxConfidence = 0;
-        let label = null;
-        for (let i = 0; i < result.length; i++) {
-          if (result[i].confidence > maxConfidence) {
-            maxConfidence = result[i].confidence;
-            label = result[i].label;
-          }
-        }
-        this.label = label;
-      });
-    }
-
-    getLabel() {
-      return this.label;
+      }
+      return label;
     }
 
     setLocale() {
