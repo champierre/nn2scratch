@@ -26,9 +26,14 @@ const Message = {
     'en': 'all'
   },
   reset: {
-    'ja': 'ラベル [LABEL] のデータをリセット',
-    'ja-Hira': 'ラベル [LABEL] のがくしゅうをリセット',
+    'ja': 'ラベル [LABEL] をリセット',
+    'ja-Hira': 'ラベル [LABEL] をリセット',
     'en': 'reset label: [LABEL]'
+  },
+  resetAll: {
+    'ja': '全てのラベルをリセット',
+    'ja-Hira': 'すべてのラベルをリセット',
+    'en': 'reset all labels'
   },
   train: {
     'ja': '訓練する',
@@ -45,7 +50,7 @@ const Message = {
     'ja-Hira': 'ラベル',
     'en': 'label'
   },
-  label: {
+  defaultLabel: {
     'ja': 'りんご',
     'ja-Hira': 'りんご',
     'en': 'apple'
@@ -98,7 +103,7 @@ class Scratch3Nn2ScratchBlocks {
                         },
                         LABEL: {
                             type: ArgumentType.STRING,
-                            defaultValue: Message.label[this._locale]
+                            defaultValue: Message.defaultLabel[this._locale]
                         }
                     }
                 },
@@ -109,9 +114,14 @@ class Scratch3Nn2ScratchBlocks {
                     arguments: {
                         LABEL: {
                             type: ArgumentType.STRING,
-                            defaultValue: Message.label[this._locale]
+                            defaultValue: Message.defaultLabel[this._locale]
                         }
                     }
+                },
+                {
+                    opcode: 'resetAll',
+                    blockType: BlockType.COMMAND,
+                    text: Message.resetAll[this._locale]
                 },
                 {
                     opcode: 'reset',
@@ -120,8 +130,7 @@ class Scratch3Nn2ScratchBlocks {
                     arguments: {
                         LABEL: {
                             type: ArgumentType.STRING,
-                            menu: 'reset_menu',
-                            defaultValue: 'all'
+                            defaultValue: Message.defaultLabel[this._locale]
                       }
                     }
                 },
@@ -171,7 +180,12 @@ class Scratch3Nn2ScratchBlocks {
       return arr.filter(item => item.ys[0] === args.LABEL).length;
     }
 
-    resetAllLabels() {
+    reset(args) {
+      const array = this.nn.neuralNetworkData.data.raw;
+      this.nn.neuralNetworkData.data.raw = array.filter(item => item.ys[0] !== args.LABEL);
+    }
+
+    resetAll(args) {
       this.nn.neuralNetworkData.data.raw = [];
     }
 
