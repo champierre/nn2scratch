@@ -31,9 +31,9 @@ const Message = {
     'en': 'reset all labels'
   },
   train: {
-    'ja': '訓練する',
-    'ja-Hira': 'くんれんする',
-    'en': 'train'
+    'ja': '訓練する(エポック数: [EPOCHS] )',
+    'ja-Hira': 'くんれんする(エポックすう: [EPOCHS] )',
+    'en': 'train(epochs: [EPOCHS] )'
   },
   getLabel: {
     'ja': '[VALUES] のラベル',
@@ -115,7 +115,14 @@ class Scratch3Nn2ScratchBlocks {
                 {
                     opcode: 'train',
                     blockType: BlockType.COMMAND,
-                    text: Message.train[this._locale]
+                    text: Message.train[this._locale],
+                    arguments: {
+                        EPOCHS: {
+                            type: ArgumentType.STRING,
+                            defaultValue: 32
+                        }
+                    }
+
                 },
                 {
                     opcode: 'getLabel',
@@ -175,11 +182,11 @@ class Scratch3Nn2ScratchBlocks {
       }
     }
 
-    train() {
+    train(args) {
       try {
         this.nn.normalizeData()
         const trainingOptions = {
-          epochs: 32,
+          epochs: Number(args.EPOCHS),
           batchSize: 12
         }
         this.nn.train(trainingOptions, function() {
