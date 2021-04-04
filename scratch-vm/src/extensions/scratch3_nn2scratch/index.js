@@ -26,9 +26,9 @@ const Message = {
     'en': 'all'
   },
   resetAll: {
-    'ja': '全てのラベルをリセット',
-    'ja-Hira': 'すべてのラベルをリセット',
-    'en': 'reset all labels'
+    'ja': '全てをリセット',
+    'ja-Hira': 'すべてをリセット',
+    'en': 'reset all'
   },
   train: {
     'ja': '訓練する(エポック数: [EPOCHS] )',
