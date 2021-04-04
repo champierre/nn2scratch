@@ -25,11 +25,6 @@ const Message = {
     'ja-Hira': 'のすべて',
     'en': 'all'
   },
-  reset: {
-    'ja': 'ラベル [LABEL] をリセット',
-    'ja-Hira': 'ラベル [LABEL] をリセット',
-    'en': 'reset label: [LABEL]'
-  },
   resetAll: {
     'ja': '全てのラベルをリセット',
     'ja-Hira': 'すべてのラベルをリセット',
@@ -118,17 +113,6 @@ class Scratch3Nn2ScratchBlocks {
                     text: Message.resetAll[this._locale]
                 },
                 {
-                    opcode: 'reset',
-                    blockType: BlockType.COMMAND,
-                    text: Message.reset[this._locale],
-                    arguments: {
-                        LABEL: {
-                            type: ArgumentType.STRING,
-                            defaultValue: Message.defaultLabel[this._locale]
-                      }
-                    }
-                },
-                {
                     opcode: 'train',
                     blockType: BlockType.COMMAND,
                     text: Message.train[this._locale]
@@ -143,6 +127,11 @@ class Scratch3Nn2ScratchBlocks {
                             defaultValue: 0
                         }
                     }
+                },
+                {
+                    opcode: 'download',
+                    blockType: BlockType.COMMAND,
+                    text: 'download'
                 },
                 {
                     opcode: 'debug',
@@ -174,43 +163,49 @@ class Scratch3Nn2ScratchBlocks {
       return arr.filter(item => item.ys[0] === args.LABEL).length;
     }
 
-    reset(args) {
-      const array = this.nn.neuralNetworkData.data.raw;
-      this.nn.neuralNetworkData.data.raw = array.filter(item => item.ys[0] !== args.LABEL);
-    }
-
     resetAll(args) {
-      this.nn.neuralNetworkData.data.raw = [];
+      try {
+        this.nn.neuralNetworkData.data.raw = [];
+        this.nn.neuralNetworkData.isMetadataReady = false;
+        this.nn.neuralNetworkData.isWarmedUp = false;
+        this.nn.neuralNetwork.isLayered = false;
+        this.nn.neuralNetwork.isCompiled = false;
+      } catch (error) {
+        alert(error);
+      }
     }
 
     train() {
-      if (this.nn.neuralNetworkData.data.raw.length === 0) {
-        alert('[Error] Data is not added yet!')
-      } else {
+      try {
         this.nn.normalizeData()
         const trainingOptions = {
           epochs: 32,
           batchSize: 12
         }
-
         this.nn.train(trainingOptions, function() {
           alert('Training is completed.');
         });
+      } catch(error) {
+        alert(error);
       }
     }
 
     getLabel(args) {
-      let inputs = args.VALUES.split(',').map(v => Number(v));
-      const result = this.nn.classifySync(inputs);
-      let maxConfidence = 0;
-      let label = null;
-      for (let i = 0; i < result.length; i++) {
-        if (result[i].confidence > maxConfidence) {
-          maxConfidence = result[i].confidence;
-          label = result[i].label;
+      try {
+        let inputs = args.VALUES.split(',').map(v => Number(v));
+        const result = this.nn.classifySync(inputs);
+        let maxConfidence = 0;
+        let label = null;
+        for (let i = 0; i < result.length; i++) {
+          if (result[i].confidence > maxConfidence) {
+            maxConfidence = result[i].confidence;
+            label = result[i].label;
+          }
         }
+        return label;
+      } catch(error) {
+        alert(error);
       }
-      return label;
     }
 
     setLocale() {
@@ -236,8 +231,18 @@ class Scratch3Nn2ScratchBlocks {
       return arr;
     }
 
+    download() {
+      const filename = String(Date.now());
+      this.nn.save(filename);
+    }
+
     debug() {
       console.log(this.nn.neuralNetworkData.data.raw);
+      console.log(this.nn.neuralNetworkData.meta);
+      console.log('isMetadataReady', this.nn.neuralNetworkData.isMetadataReady);
+      console.log('isWarmedUp', this.nn.neuralNetworkData.isWarmedUp);
+      console.log('isLayered', this.nn.neuralNetwork.isLayered);
+      console.log('isCompiled', this.nn.neuralNetwork.isCompiled);
     }
 }
 
