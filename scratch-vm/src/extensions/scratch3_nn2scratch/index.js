@@ -60,7 +60,7 @@ class Scratch3Nn2ScratchBlocks {
     }
 
     getInfo () {
-        this._locale = this.setLocale();
+        this.locale = this.setLocale();
 
         return {
             id: 'nn2scratch',
@@ -69,7 +69,7 @@ class Scratch3Nn2ScratchBlocks {
                 {
                     opcode: 'joinWithComma',
                     blockType: BlockType.REPORTER,
-                    text: Message.joinWithComma[this._locale],
+                    text: Message.joinWithComma[this.locale],
                     arguments: {
                         STR1: {
                             type: ArgumentType.STRING,
@@ -84,7 +84,7 @@ class Scratch3Nn2ScratchBlocks {
                 {
                     opcode: 'setLabel',
                     blockType: BlockType.COMMAND,
-                    text: Message.setLabel[this._locale],
+                    text: Message.setLabel[this.locale],
                     arguments: {
                         VALUES: {
                             type: ArgumentType.STRING,
@@ -92,30 +92,30 @@ class Scratch3Nn2ScratchBlocks {
                         },
                         LABEL: {
                             type: ArgumentType.STRING,
-                            defaultValue: Message.defaultLabel[this._locale]
+                            defaultValue: Message.defaultLabel[this.locale]
                         }
                     }
                 },
                 {
                     opcode: 'dataCount',
                     blockType: BlockType.REPORTER,
-                    text: Message.dataCount[this._locale],
+                    text: Message.dataCount[this.locale],
                     arguments: {
                         LABEL: {
                             type: ArgumentType.STRING,
-                            defaultValue: Message.defaultLabel[this._locale]
+                            defaultValue: Message.defaultLabel[this.locale]
                         }
                     }
                 },
                 {
                     opcode: 'resetAll',
                     blockType: BlockType.COMMAND,
-                    text: Message.resetAll[this._locale]
+                    text: Message.resetAll[this.locale]
                 },
                 {
                     opcode: 'train',
                     blockType: BlockType.COMMAND,
-                    text: Message.train[this._locale],
+                    text: Message.train[this.locale],
                     arguments: {
                         EPOCHS: {
                             type: ArgumentType.STRING,
@@ -126,7 +126,7 @@ class Scratch3Nn2ScratchBlocks {
                 },
                 {
                     opcode: 'getLabel',
-                    text: Message.getLabel[this._locale],
+                    text: Message.getLabel[this.locale],
                     blockType: BlockType.REPORTER,
                     arguments: {
                         VALUES: {
@@ -134,23 +134,8 @@ class Scratch3Nn2ScratchBlocks {
                             defaultValue: 0
                         }
                     }
-                },
-                {
-                    opcode: 'download',
-                    blockType: BlockType.COMMAND,
-                    text: 'download'
-                },
-                {
-                    opcode: 'debug',
-                    blockType: BlockType.COMMAND,
-                    text: 'debug'
-                },
-            ],
-            menus: {
-                reset_menu: {
-                    items: this.getMenu()
                 }
-            }
+            ]
         };
     }
 
@@ -172,11 +157,10 @@ class Scratch3Nn2ScratchBlocks {
 
     resetAll(args) {
       try {
-        this.nn.neuralNetworkData.data.raw = [];
-        this.nn.neuralNetworkData.isMetadataReady = false;
-        this.nn.neuralNetworkData.isWarmedUp = false;
-        this.nn.neuralNetwork.isLayered = false;
-        this.nn.neuralNetwork.isCompiled = false;
+        const options = {
+          task: 'classification'
+        }
+        this.nn = ml5.neuralNetwork(options);
       } catch (error) {
         alert(error);
       }
@@ -222,34 +206,6 @@ class Scratch3Nn2ScratchBlocks {
       } else {
         return 'en';
       }
-    }
-
-    getMenu() {
-      let arr = [];
-      let defaultValue = 'all';
-      let text = Message.all[this._locale];
-      arr.push({text: text, value: defaultValue});
-      for(let i = 1; i <= 10; i++) {
-        let obj = {};
-        obj.text = i.toString(10);
-        obj.value = i.toString(10);
-        arr.push(obj);
-      };
-      return arr;
-    }
-
-    download() {
-      const filename = String(Date.now());
-      this.nn.save(filename);
-    }
-
-    debug() {
-      console.log(this.nn.neuralNetworkData.data.raw);
-      console.log(this.nn.neuralNetworkData.meta);
-      console.log('isMetadataReady', this.nn.neuralNetworkData.isMetadataReady);
-      console.log('isWarmedUp', this.nn.neuralNetworkData.isWarmedUp);
-      console.log('isLayered', this.nn.neuralNetwork.isLayered);
-      console.log('isCompiled', this.nn.neuralNetwork.isCompiled);
     }
 }
 
